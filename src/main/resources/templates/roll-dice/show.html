@@ -1,0 +1,17 @@
+
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="partials :: head ('Roll-a-Die')">
+</head>
+<body class="main-container main-bg">
+<nav th:replace="partials :: navbar"></nav>
+<main class="container">
+    <h1>User guessed <span th:number="${number}"></span>. The dice landed on <span th:text="${result}"></span>.</h1>
+    <h1 th:if="${number != result}">You lose...</h1>
+    <h1 th:if="${number == result}">You win!!!</h1>
+</main>
+<footer th:replace="partials :: footer"></footer>
+<div th:replace="partials :: boot-scripts"></div>
+</body>
+</html>

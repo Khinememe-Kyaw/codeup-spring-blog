@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="partials:: head('Viewing the Post')">
+    <meta charset="UTF-8">
+    <title>Website for Posting Things</title>
+</head>
+<body class="main-container main-bg">
+<nav th:replace="partials:: navbar"></nav>
+
+<main>
+    <h1 th:text="${post.title}"></h1>
+    <p th:text="${post.body}"></p>
+</main>
+
+<footer th:replace="partials:: footer"></footer>
+<div th:replace="partials:: boot-scripts"></div>
+</body>
+</html>
