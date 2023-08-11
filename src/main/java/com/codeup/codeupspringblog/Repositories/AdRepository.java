@@ -5,5 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 public interface AdRepository extends JpaRepository<Ad, Long> {
+    Ad findAdById(long id);
 
 }
