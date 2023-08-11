@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="partials::head('Viewing The Ad')">
+    <meta charset="UTF-8">
+    <title>Viewing the Ad</title>
+</head>
+<body class="main-container main-bg">
+  <nav th:replace="partials:: navbar"></nav>
+  <main class="container">
+    <div th:each="ad : ${ads}">
+      <a th:href="@{ads/{id} (id=${ad.id})}">
+        <h1 th:text="${ad.title}"></h1>
+        <p th:description="${ad.description}"></p>
+      </a>
+    </div>
+  </main>
+<footer th:replace="partials:: footer"></footer>
+<div th:replace="partials:: boot-scripts"></div>
+
+</body>
+</html>
+
+<!--<!DOCTYPE html>-->
+<!--<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">-->
+<!--<head th:replace="partials :: head ('Viewing an Ad')">-->
+<!--  <title>Prolonged Fart Noises</title>-->
+<!--</head>-->
+<!--<body class="main-bg main-container">-->
+<!--<nav th:replace="partials :: navbar"></nav>-->
+<!--<main class="container">-->
+<!--  <div th:each="ad : ${ads}">-->
+<!--    <a th:href="@{/ads/{id} (id = ${ad.id})}"><h1 th:text="${ad.title}"></h1></a>-->
+<!--    <p th:text="${ad.description}"></p>-->
+<!--  </div>-->
+
+<!--</main>-->
+<!--<footer th:replace="partials :: footer"></footer>-->
+<!--<div th:replace="partials :: boot-scripts"></div>-->
+<!--</body>-->
+<!--</html>-->
