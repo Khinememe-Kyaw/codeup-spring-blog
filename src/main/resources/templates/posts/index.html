@@ -1,23 +1,17 @@
 
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="partials :: head('Viewing the Ad')">
-    <title>Website for Posting Things</title>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Posts</title>
 </head>
+<body>
+<h1>Look at your posts!</h1>
+<div th:each="post : ${posts}">
+    <h2>Post</h2>
+    <p th:text="${post.title}" />
+    <p th:text="${post.body}" /><br>
+</div>
 
-<body class="main-bg main-container">
-<nav th:replace="partials:: navbar"></nav>
-
-<main class="container">
-    <div th:each="post : ${posts}">
-        <a th:href="@{posts/{id} (id= ${post.id})}">
-            <h1 th:text="${post.title}"></h1>
-            <p th:text="${post.body}"></p>
-        </a>
-    </div>
-</main>
-
-<footer th:replace="partials:: footer"></footer>
-<div th:replace="partials:: boot-scripts"></div>
 </body>
 </html>

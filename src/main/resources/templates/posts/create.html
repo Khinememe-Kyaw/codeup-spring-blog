@@ -1,23 +1,22 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="~{partials :: head ('Create New Post')}">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create a post</title>
 </head>
-<body class="main-container main-bg">
-<nav th:replace="partials :: navbar"></nav>
-<main class="container">
-    <h1 th:text="${heading}"></h1>
-    <form th:action="@{/posts/save}" th:method="post" th:object="${post}">
-        <div class="mb-3">
-            <label for="title" class="form-label">Post Title:</label>
-            <input type="text" name="title" id="title" th:field="*{title}" class="form-control">
-            <label for="body" class="form-label">Post Body:</label>
-            <textarea name="body" id="body" class="form-control" cols="30" rows="10" th:field="*{body}"></textarea>
-            <input type="hidden" th:field="*{id}">
-        </div>
-        <button class="btn footer-bg w-100" type="submit">Submit Post</button>
+<body>
+
+<div>
+    <form th:action="@{/posts/create}" method="post" th:object="${post}">
+        <h3><label for="title">Post Title</label><br></h3>
+        <input type="text" id="title" th:field="*{title}" /><br>
+
+        <h3><label for="body">Post description</label><br></h3>
+        <textarea type="text" id="body" th:field="*{body}"></textarea><br>
+
+        <button type="submit">Create Post</button>
     </form>
-</main>
-<footer th:replace="partials :: footer"></footer>
-<div th:replace="partials :: boot-scripts"></div>
+</div>
+
 </body>
 </html>
