@@ -1,48 +1,32 @@
 package com.codeup.codeupspringblog.controllers;
 
 import com.codeup.codeupspringblog.models.Post;
+import com.codeup.codeupspringblog.models.User;
+import com.codeup.codeupspringblog.Repositories.PostRepository;
+import com.codeup.codeupspringblog.Repositories.UserRepository;
+import com.codeup.codeupspringblog.services.EmailService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 public class PostController {
-//    post index page
-    @GetMapping( "/posts")
-    public String postsHome(Model model) {
-        ArrayList<Post> posts = new ArrayList<>();
-        posts.add( new Post(1, "Title One", "Body One"));
-        posts.add( new Post(2, "Title Two", "Body Two"));
-        model.addAttribute("posts",posts);
-        return "posts/index";
-    }
-//    View an individual post
-    @GetMapping( "/posts/{id}")
-    public String postsHome(@PathVariable long id, Model model){
-        Post post = new Post(id, "Title is Here", "Body Goes Here");
-        model.addAttribute("post", post);
-        return "posts/show";
-    }
-//    view the form for creating a post
-    @GetMapping( "/posts/create")
-    @ResponseBody
-    public String postForm(){
-        return "Form goes here";
-    }
-//    create a new post
-    @PostMapping( "/posts/create")
-    public String createPost() {
-        return "Storing the post";
-    }
-}
 
-//@Controller
-//public class PostController {
+
+    private final PostRepository postDao;
+    private final UserRepository userDao;
+    private final EmailService emailService;
+
+    public PostController(PostRepository postDao, UserRepository userDao, EmailService emailService) {
+        this.postDao = postDao;
+        this.userDao = userDao;
+        this.emailService = emailService;
+    }
+
+
+    //  *** OLD mapping ***
 //    @GetMapping("/posts")
 //    public String postsHome(Model model) {
 //        ArrayList<Post> posts = new ArrayList<>();
@@ -51,21 +35,51 @@ public class PostController {
 //        model.addAttribute("posts", posts);
 //        return "posts/index";
 //    }
-//
+
+    @GetMapping("/posts")
+    public String postsHome(Model model) {
+        List<Post> posts = postDao.findAll();
+        model.addAttribute("posts", posts);
+        return "posts/index";
+    }
+
+
+//    *** Old Mapping ***
 //    @GetMapping("/posts/{id}")
 //    public String postsHome(@PathVariable long id, Model model) {
 //        Post post = new Post(id, "Test post", "Why do all these posts look the same?");
 //        model.addAttribute("post", post);
 //        return "posts/show";
 //    }
-//
-//    @GetMapping("/posts/create")
-//    @ResponseBody
-//    public String postsForm() {
-//        return "And this is where the form for creating a post would go... IF WE HAD ONE!";
-//    }
-//    @PostMapping("/posts/create")
-//    public void createPost() {
-//        //Something happens here to store a post for later ;)
-//    }
-//}
+
+    @GetMapping("/posts/{id}")
+    public String postsHome(@PathVariable long id, Model model) {
+        Post post = postDao.findPostById(id);
+        model.addAttribute("post", post);
+        return "posts/show";
+    }
+
+    @GetMapping("/posts/{id}/edit")
+    public String postsEdit(@PathVariable long id, Model model){
+        Post post = postDao.findPostById(id);
+        model.addAttribute("post", post);
+        return "post/show";
+    }
+
+    @GetMapping("/posts/create")
+    public String postsForm(Model model) {
+        model.addAttribute("heading", "Create new post.");
+        return "posts/create";
+    }
+    @PostMapping("/posts/save")
+    public String createPost(@RequestParam String title, @RequestParam String body) {
+        Post post = new Post(title, body);
+        User user = userDao.findById(1L).get();
+        post.setUser(user);
+        postDao.save(post);
+        emailService.sendPostEmail(post, "A post has been created", "ok, This is your body" + post.getBody());
+        return "redirect:/posts";
+    }
+
+}
+
