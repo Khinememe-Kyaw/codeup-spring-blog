@@ -8,14 +8,17 @@
 		<version>3.1.2</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
+
 	<groupId>com.codeup</groupId>
 	<artifactId>codeup-spring-blog</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>codeup-spring-blog</name>
-	<description>Full stack blog application</description>
+	<description>Full-Stack Spring Boot Blog Application</description>
+
 	<properties>
 		<java.version>17</java.version>
 	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -43,11 +46,26 @@
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
-			<version>8.0.33</version>
+			<version>8.0.32</version>
 		</dependency>
-        <dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-starter-mail</artifactId>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.28</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.thymeleaf.extras</groupId>
+			<artifactId>thymeleaf-extras-springsecurity6</artifactId>
+			<version>3.1.1.RELEASE</version>
 		</dependency>
 	</dependencies>
 

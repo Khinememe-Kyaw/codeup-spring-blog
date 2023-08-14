@@ -1,35 +1,22 @@
-package com.codeup.codeupspringblog.controllers;//package com.codeup.codeupspringblog.controllers;
-//
-//import org.springframework.stereotype.Controller;
-//import org.springframework.web.bind.annotation.GetMapping;
-//import org.springframework.web.bind.annotation.ResponseBody;
-//@Controller
-//public class HomeController {
-//    @GetMapping("/")
-//    @ResponseBody
-//    public String welcome(){
-//        return "This is a landing page!";
-//    }
-//}
+package com.codeup.codeupspringblog.controllers;
 
-
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+@AllArgsConstructor
 @Controller
 public class HomeController {
+    @GetMapping("/")
+    @ResponseBody
+    public String landingpageGreeting(){
+        return "This is the landing page";
+    }
 
     @GetMapping("/home")
     public String welcome() {
         return "home";
-    }
-
-    @GetMapping("/hello/{name}")
-    public String sayHello(@PathVariable String name, Model model) {
-        model.addAttribute("name", name);
-        return "hello";
     }
 
 }

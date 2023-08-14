@@ -4,82 +4,110 @@ import com.codeup.codeupspringblog.models.Post;
 import com.codeup.codeupspringblog.models.User;
 import com.codeup.codeupspringblog.Repositories.PostRepository;
 import com.codeup.codeupspringblog.Repositories.UserRepository;
+import com.codeup.codeupspringblog.services.Authorization;
 import com.codeup.codeupspringblog.services.EmailService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import lombok.*;
 
+import java.util.Optional;
 import java.util.List;
 
+@AllArgsConstructor
 @Controller
+@RequestMapping("/posts")
 public class PostController {
-
-
-    private final PostRepository postDao;
-    private final UserRepository userDao;
-    private final EmailService emailService;
-
-    public PostController(PostRepository postDao, UserRepository userDao, EmailService emailService) {
-        this.postDao = postDao;
-        this.userDao = userDao;
-        this.emailService = emailService;
-    }
-
-
-    //  *** OLD mapping ***
-//    @GetMapping("/posts")
-//    public String postsHome(Model model) {
-//        ArrayList<Post> posts = new ArrayList<>();
-//        posts.add(new Post(1,"Wow!", "Free Brownies in the quad!"));
-//        posts.add(new Post(2,"Uh-oh...", "The brownies betrayed me..."));
-//        model.addAttribute("posts", posts);
-//        return "posts/index";
-//    }
+    private PostRepository postDao;
+    private UserRepository userDao;
+    private EmailService emailService;
 
     @GetMapping("/posts")
-    public String postsHome(Model model) {
+    public String posts(Model model){
+
+        User loggedInUser = Authorization.getLoggedInUser();
+        model.addAttribute("loggedInUser", loggedInUser);
+
         List<Post> posts = postDao.findAll();
-        model.addAttribute("posts", posts);
+
+        model.addAttribute("posts",posts);
         return "posts/index";
     }
 
+    @GetMapping("/posts/show/{id}")
+    public String showSinglePost(@PathVariable Long id, Model model){
+        User loggedInUser = Authorization.getLoggedInUser();
+        model.addAttribute("loggedInUser", loggedInUser);
+        Optional<Post> optionalPost = postDao.findById(id);
+        if(optionalPost.isEmpty()) {
+            System.out.printf("Post with id " + id + " not found!");
+            return "home";
+        }
 
-//    *** Old Mapping ***
-//    @GetMapping("/posts/{id}")
-//    public String postsHome(@PathVariable long id, Model model) {
-//        Post post = new Post(id, "Test post", "Why do all these posts look the same?");
-//        model.addAttribute("post", post);
-//        return "posts/show";
-//    }
-
-    @GetMapping("/posts/{id}")
-    public String postsHome(@PathVariable long id, Model model) {
-        Post post = postDao.findPostById(id);
-        model.addAttribute("post", post);
+        model.addAttribute("post", optionalPost.get());
         return "posts/show";
     }
 
-    @GetMapping("/posts/{id}/edit")
-    public String postsEdit(@PathVariable long id, Model model){
-        Post post = postDao.findPostById(id);
-        model.addAttribute("post", post);
-        return "post/show";
-    }
-
     @GetMapping("/posts/create")
-    public String postsForm(Model model) {
-        model.addAttribute("heading", "Create new post.");
+    public String showCreate(Model model) {
+        User loggedInUser = Authorization.getLoggedInUser();
+        if(loggedInUser.getId() == 0) {
+            return "redirect:/login";
+        }
+
+        model.addAttribute("loggedInUser", loggedInUser);
+
+        model.addAttribute("newPost", new Post());
         return "posts/create";
     }
-    @PostMapping("/posts/save")
-    public String createPost(@RequestParam String title, @RequestParam String body) {
-        Post post = new Post(title, body);
-        User user = userDao.findById(1L).get();
-        post.setUser(user);
+
+    @PostMapping("/posts/create")
+    public String doCreate(@RequestParam String title, @RequestParam String body) {
+        User loggedInUser = Authorization.getLoggedInUser();
+        if(loggedInUser.getId() == 0) {
+            return "redirect:/login";
+        }
+
+        Post post = new Post();
+        post.setCreator(loggedInUser);
         postDao.save(post);
-        emailService.sendPostEmail(post, "A post has been created", "ok, This is your body" + post.getBody());
+
         return "redirect:/posts";
     }
+    @GetMapping("posts/edit/{id}")
+    public String showEdit(@PathVariable Long id, Model model) {
+        User loggedInUser = Authorization.getLoggedInUser();
+        model.addAttribute("loggedInUser", loggedInUser);
+
+        Post postToEdit = postDao.getReferenceById(id);
+        model.addAttribute("newPost", postToEdit);
+        return "/posts/create";
+    }
+//    @GetMapping("/posts/edit/{id}")
+//    public String createEdit(@PathVariable long id, Model model) {
+//        Optional<Post> optionalPost = Optional.ofNullable(postDao.findById(id));
+//
+//        if (optionalPost.isPresent()) {
+//            Post post = optionalPost.get();
+//            model.addAttribute("post", post);
+//            return "posts/edit";
+//        } else {
+//            // Handle the case where the post is not found
+//            // You might redirect or show an error message
+//            return "redirect:/posts"; // For example, redirect back to the posts list
+//        }
+//    }
+
+//    @PostMapping("/posts/edit/{id}")
+//    public String editPost(@ModelAttribute Post editedPost){
+//        Post existingPost = postDao.findById(editedPost.getId()).orElseThrow(() -> new IllegalArgumentException("Post not found"));
+//        existingPost.setTitle(editedPost.getTitle());
+//        existingPost.setBody(editedPost.getBody());
+//
+//        postDao.save(existingPost);
+//
+//        return "redirect:/posts";
+//    }
 
 }
 

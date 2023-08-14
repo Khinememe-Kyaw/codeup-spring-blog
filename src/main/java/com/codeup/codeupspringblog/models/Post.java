@@ -1,43 +1,53 @@
 package com.codeup.codeupspringblog.models;
-
 import jakarta.persistence.*;
+import lombok.*;
+import jakarta.persistence.Entity;
+
+// Model..These build out the tables in DB
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@ToString
+
 
 @Entity
 @Table(name = "posts")
 public class Post {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
+
+    @Column(nullable = false)
     private String body;
+
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private User creator;
 
-
-    public Post() {
-    }
-
-    public Post(String title, String body) {
+    public Post(String title, String body, User creator) {
         this.title = title;
         this.body = body;
+        this.creator = creator;
     }
 
-    public Post(long id, String title, String body) {
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
         this.id = id;
-        this.title = title;
-        this.body = body;
     }
 
     public String getTitle() {
         return title;
     }
+
     public void setTitle(String title) {
         this.title = title;
     }
@@ -50,19 +60,11 @@ public class Post {
         this.body = body;
     }
 
-    public long getId() {
-        return id;
+    public User getCreator() {
+        return creator;
     }
 
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
+    public void setCreator(User creator) {
+        this.creator = creator;
     }
 }
