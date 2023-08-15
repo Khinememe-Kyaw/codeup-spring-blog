@@ -1,13 +1,15 @@
 
 
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="partials:: head ('Blog')">
+    <meta charset="UTF-8">
+    <title>Roll Dice</title>
 </head>
 <body class="main-container main-bg">
 <nav th:replace="partials :: navbar"></nav>
 <main class="container">
-    <h1>User guessed <span th:number="${number}"></span>. The dice landed on <span th:text="${result}"></span>.</h1>
+    <h1>User guessed <span th:text="${number}"></span>. The dice landed on <span th:text="${result}"></span>.</h1>
     <h1 th:if="${number != result}">You lose...</h1>
     <h1 th:if="${number == result}">You win!!!</h1>
 </main>

@@ -1,0 +1,48 @@
+.main-bg {
+    background: #F7F3E3;
+    color: #2B2118
+}
+
+.main-container {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+    justify-content: flex-start;
+    font-family: 'IBM Plex Serif', serif;
+}
+
+.nav-bg {
+    background: plum;
+    color: #F7F3E3;
+}
+
+.nav-bg .logo-font {
+    text-shadow: 2px 2px #2B2118;
+}
+
+.logo-font {
+    font-family: 'Henny Penny', cursive;
+}
+
+.nav-bg a:link, .nav-bg a:visited {
+    color: #F7F3E3;
+}
+
+.nav-bg a:active, .nav-bg a:hover {
+    color: #0090C1;
+}
+
+.footer-bg {
+    background: #0090C1;
+    color: #F7F3E3;
+}
+
+.btn:hover {
+    background: #3F826D;
+    color: #2B2118;
+}
+
+.btn:active {
+    background: #2B2118;
+    color: #F7F3E3;
+}
