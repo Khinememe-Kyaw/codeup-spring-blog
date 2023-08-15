@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
+<head th:replace="partials:: head ('Blog')">
   <meta charset="UTF-8" />
   <title>Log In</title>
 </head>
 <body>
+<nav th:replace="partials :: navbar"></nav>
 <h1>Log In</h1>
 <div th:if="${param.error}">
   Invalid Username and Password.
@@ -14,11 +15,15 @@
 </div>
 
 <form th:action="@{/login}" method="post">
-  <label for="username">Username</label>
-  <input id="username" name="username" type="text" />
-  <label for="password">Password</label>
-  <input id="password" name="password" type="password" />
-  <input type="submit" value="Log In" />
+  <div class="mb-3">
+    <label for="username" class="form-label">Username</label>
+    <input id="username" name="username" type="text" class="form-control" />
+    <label for="password" class="form-label">Password</label>
+    <input id="password" name="password" type="password" class="form-control" />
+  </div>
+  <input  class="btn footer-bg w-100" type="submit" value="Log In" />
 </form>
+<footer th:replace="partials :: footer"></footer>
+<div th:replace="partials :: boot-scripts"></div>
 </body>
 </html>

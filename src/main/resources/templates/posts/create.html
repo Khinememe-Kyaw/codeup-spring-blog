@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
+<head th:replace="partials:: head ('Blog')">
     <meta charset="UTF-8">
     <title>Create a post</title>
 </head>
 <body>
-
+<nav th:replace="partials :: navbar"></nav>
 <div>
     <form th:action="@{/posts/create}" method="post" th:object="${post}">
         <h3><label for="title">Post Title</label><br></h3>
@@ -17,6 +17,7 @@
         <button type="submit">Create Post</button>
     </form>
 </div>
-
+<footer th:replace="partials :: footer"></footer>
+<div th:replace="partials :: boot-scripts"></div>
 </body>
 </html>

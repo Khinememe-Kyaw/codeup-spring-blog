@@ -1,17 +1,19 @@
 
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
+<head th:replace="partials:: head ('Blog')">
     <meta charset="UTF-8">
     <title>Posts</title>
 </head>
 <body>
+<nav th:replace="partials :: navbar"></nav>
 <h1>Look at your posts!</h1>
 <div th:each="post : ${posts}">
     <h2>Post</h2>
     <p th:text="${post.title}" />
     <p th:text="${post.body}" /><br>
 </div>
-
+<footer th:replace="partials :: footer"></footer>
+<div th:replace="partials :: boot-scripts"></div>
 </body>
 </html>

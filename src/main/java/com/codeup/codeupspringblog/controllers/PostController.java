@@ -2,112 +2,106 @@ package com.codeup.codeupspringblog.controllers;
 
 import com.codeup.codeupspringblog.models.Post;
 import com.codeup.codeupspringblog.models.User;
+import com.codeup.codeupspringblog.models.UserWithRoles;
 import com.codeup.codeupspringblog.Repositories.PostRepository;
 import com.codeup.codeupspringblog.Repositories.UserRepository;
-import com.codeup.codeupspringblog.services.Authorization;
-import com.codeup.codeupspringblog.services.EmailService;
-import org.springframework.stereotype.Controller;
+import com.codeup.codeupspringblog.service.EmailService;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
 import lombok.*;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
-import java.util.List;
 
-@AllArgsConstructor
+
 @Controller
-@RequestMapping("/posts")
-public class PostController {
-    private PostRepository postDao;
-    private UserRepository userDao;
-    private EmailService emailService;
+public class PostController{
+
+    private final EmailService emailService;
+
+    private final PostRepository postDao;
+
+
+    public PostController(PostRepository postDao, EmailService emailService){
+        this.emailService = emailService;
+        this.postDao = postDao;
+    }
 
     @GetMapping("/posts")
-    public String posts(Model model){
-
-        User loggedInUser = Authorization.getLoggedInUser();
-        model.addAttribute("loggedInUser", loggedInUser);
-
-        List<Post> posts = postDao.findAll();
-
-        model.addAttribute("posts",posts);
+    public String index(Model model){
+        model.addAttribute("posts", postDao.findAll());
         return "posts/index";
     }
 
-    @GetMapping("/posts/show/{id}")
-    public String showSinglePost(@PathVariable Long id, Model model){
-        User loggedInUser = Authorization.getLoggedInUser();
-        model.addAttribute("loggedInUser", loggedInUser);
-        Optional<Post> optionalPost = postDao.findById(id);
-        if(optionalPost.isEmpty()) {
-            System.out.printf("Post with id " + id + " not found!");
-            return "home";
-        }
-
-        model.addAttribute("post", optionalPost.get());
-        return "posts/show";
-    }
-
     @GetMapping("/posts/create")
-    public String showCreate(Model model) {
-        User loggedInUser = Authorization.getLoggedInUser();
-        if(loggedInUser.getId() == 0) {
-            return "redirect:/login";
-        }
-
-        model.addAttribute("loggedInUser", loggedInUser);
-
-        model.addAttribute("newPost", new Post());
+    public String showPostCreateForm(Model model) {
+        model.addAttribute("post", new Post());
         return "posts/create";
     }
 
     @PostMapping("/posts/create")
-    public String doCreate(@RequestParam String title, @RequestParam String body) {
-        User loggedInUser = Authorization.getLoggedInUser();
-        if(loggedInUser.getId() == 0) {
-            return "redirect:/login";
-        }
-
-        Post post = new Post();
-        post.setCreator(loggedInUser);
+    public String CreatePost(
+            @RequestParam(name="title") String title,
+            @RequestParam(name="body") String body){
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Post post = new Post(title, body, user);
         postDao.save(post);
 
+        emailService.sendPostEmail(post, "Here's your post", "Post body");
         return "redirect:/posts";
     }
-    @GetMapping("posts/edit/{id}")
-    public String showEdit(@PathVariable Long id, Model model) {
-        User loggedInUser = Authorization.getLoggedInUser();
-        model.addAttribute("loggedInUser", loggedInUser);
 
-        Post postToEdit = postDao.getReferenceById(id);
-        model.addAttribute("newPost", postToEdit);
-        return "/posts/create";
+    @GetMapping("/posts/{id}")
+    public String postsView(@PathVariable long id, Model model) {
+        Optional<Post> optionalPost = postDao.findById(id);
+
+        if (optionalPost.isPresent()) {
+            Post post = optionalPost.get();
+            model.addAttribute("post", post);
+            return "posts/show";
+        } else {
+            // Handle case where post with given ID is not found
+            return "error-page"; // Replace with the appropriate error page
+        }
     }
-//    @GetMapping("/posts/edit/{id}")
-//    public String createEdit(@PathVariable long id, Model model) {
-//        Optional<Post> optionalPost = Optional.ofNullable(postDao.findById(id));
-//
-//        if (optionalPost.isPresent()) {
-//            Post post = optionalPost.get();
-//            model.addAttribute("post", post);
-//            return "posts/edit";
-//        } else {
-//            // Handle the case where the post is not found
-//            // You might redirect or show an error message
-//            return "redirect:/posts"; // For example, redirect back to the posts list
-//        }
-//    }
 
-//    @PostMapping("/posts/edit/{id}")
-//    public String editPost(@ModelAttribute Post editedPost){
-//        Post existingPost = postDao.findById(editedPost.getId()).orElseThrow(() -> new IllegalArgumentException("Post not found"));
-//        existingPost.setTitle(editedPost.getTitle());
-//        existingPost.setBody(editedPost.getBody());
-//
-//        postDao.save(existingPost);
-//
-//        return "redirect:/posts";
-//    }
 
+    @GetMapping("/posts/{id}/edit")
+    public String editOnePost(@PathVariable long id, Model model) {
+        Post post = postDao.findPostById(id);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication.getPrincipal() instanceof UserWithRoles) {
+            UserWithRoles authenticatedUserWithRoles = (UserWithRoles) authentication.getPrincipal();
+            User authenticatedUser = authenticatedUserWithRoles;
+
+            if (post.getUser().getId() == authenticatedUser.getId()) {
+                model.addAttribute("post", post);
+                return "posts/edit";
+            }else{
+                return "redirect:/post/" + id;
+            }
+        }
+
+        return "redirect:/posts/" + id;
+    }
+
+    @PostMapping("/posts/{id}/edit")
+    public String submitOnePost(@PathVariable long id, @ModelAttribute Post post) {
+        Post postToUpdate = postDao.findPostById(id);
+        User authenticatedUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (postToUpdate.getUser().getId() == authenticatedUser.getId()){
+            postToUpdate.setTitle(post.getTitle());
+            postToUpdate.setBody(post.getBody());
+            postDao.save(postToUpdate);
+        }else{
+            System.out.println(postToUpdate.getUser());
+            System.out.println(authenticatedUser);
+        }
+        return "redirect:/posts/" + id;
+    }
 }
-
