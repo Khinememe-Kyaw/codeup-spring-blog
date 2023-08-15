@@ -1,5 +1,6 @@
-package com.codeup.codeupspringblog;
+package com.codeup.codeupspringblog.security;
 
+import com.codeup.codeupspringblog.services.UserDetailsLoader;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,7 +17,10 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableWebSecurity
 public class SecurityConfiguration {
 
-    public SecurityConfiguration() {
+    private UserDetailsLoader usersLoader;
+
+    public SecurityConfiguration(UserDetailsLoader usersLoader) {
+        this.usersLoader = usersLoader;
     }
 
     @Bean
@@ -34,18 +38,15 @@ public class SecurityConfiguration {
         http.authorizeHttpRequests((requests) -> requests
                         /* Pages that require authentication
                          * only authenticated users can create and edit ads */
-                        .requestMatchers("/posts/create", "/posts/*/edit").authenticated()
+                        .requestMatchers("/posts/create", "/posts/*/edit","/posts", "/profile").authenticated()
 
                         /* Pages that do not require authentication
                          * anyone can visit the home page, register, login, and view ads */
-                        .requestMatchers("/",  "/sign-up", "/login").permitAll()
-                        .requestMatchers("/posts", "/posts/*").permitAll()
-
-                        // allow loading of static resources
-                        .requestMatchers("/css/**", "/js/**", "/img/**").permitAll()
+                        .requestMatchers("/",  "/posts", "/posts/*", "/sign-up", "/register", "/login", "/roll-dice", "/roll-dice/**", "/css/**", "/js/**", "/img/**").permitAll()
                 )
                 /* Login configuration */
-                .formLogin((login) -> login.loginPage("/login").defaultSuccessUrl("/posts"))
+                .formLogin((login) -> login.loginPage("/login").defaultSuccessUrl("/profile"))
+
                 /* Logout configuration */
                 .logout((logout) -> logout.logoutSuccessUrl("/"))
                 .httpBasic(withDefaults());

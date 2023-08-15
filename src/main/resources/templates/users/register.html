@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="partials:: head ('Blog')">
+</head>
+<body class="main-container main-bg">
+<nav th:replace="partials :: navbar"></nav>
+<main class="container">
+  <h1>Create an account</h1>
+  <form th:action="@{/sign-up}" th:method="POST" th:object="${user}">
+    <div class="mb-3">
+      <label for="username" class="form-label">Username</label>
+      <input id="username" th:field="*{username}" class="form-control"/>
+
+      <label for="email" class="form-label">Email</label>
+      <input id="email" th:field="*{email}" class="form-control"/>
+
+      <label for="password" class="form-label">Password</label>
+      <input id="password" type="password" th:field="*{password}" class="form-control"/>
+    </div>
+    <input value="Sign me up!" type="submit" class="btn footer-bg w-100"/>
+  </form>
+</main>
+<footer th:replace="partials :: footer"></footer>
+<div th:replace="partials :: boot-scripts"></div>
+</body>
+</html>

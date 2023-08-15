@@ -1,16 +1,11 @@
 package com.codeup.codeupspringblog.models;
 import jakarta.persistence.*;
 import lombok.*;
-import jakarta.persistence.Entity;
 
-// Model..These build out the tables in DB
-@AllArgsConstructor
-@NoArgsConstructor
+
 @Getter
 @Setter
 @ToString
-
-
 @Entity
 @Table(name = "posts")
 public class Post {
@@ -21,20 +16,37 @@ public class Post {
     @Column(nullable = false)
     private String title;
 
-
     @Column(nullable = false)
     private String body;
 
-
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User creator;
+    private User user;
 
-    public Post(String title, String body, User creator) {
+    public Post() {
+
+    }
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Post(long id, String title, String body, User user) {
+        this.id = id;
         this.title = title;
         this.body = body;
-        this.creator = creator;
+        this.user = user;
     }
+
+    public Post(String title, String body, User user) {
+        this.title = title;
+        this.body = body;
+        this.user = user;
+    }
+
 
     public long getId() {
         return id;
@@ -59,12 +71,14 @@ public class Post {
     public void setBody(String body) {
         this.body = body;
     }
-
-    public User getCreator() {
-        return creator;
+    @Override
+    public String toString() {
+        return "Post{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", body='" + body + '\'' +
+                ", user=" + user +
+                '}';
     }
 
-    public void setCreator(User creator) {
-        this.creator = creator;
-    }
 }

@@ -1,7 +1,7 @@
 
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:fragment="head (title)">
+<head th:fragment="head ('Blog')">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title th:text="${title}"></title>
@@ -27,16 +27,16 @@
                     <a class="nav-link" href="/roll-dice">Roll Dice</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/posts"> View Ads</a>
+                    <a class="nav-link" href="/posts"> View Posts</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/posts/create">Create Ad</a>
+                    <a class="nav-link" href="/posts/create">Create Post</a>
                 </li>
-                <li>
-                    <form th:action="@{/logout}" th:method="post">
-                        <button class="btn-link btn" style="margin-top: 8px">Logout</button>
-                    </form>
-                </li>
+<!--                <li>-->
+<!--                    <form th:action="@{/logout}" th:method="post">-->
+<!--                        <button class="btn-link btn" style="margin-top: 8px">Logout</button>-->
+<!--                    </form>-->
+<!--                </li>-->
             </ul>
         </div>
     </div>

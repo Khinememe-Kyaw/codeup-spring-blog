@@ -1,14 +1,33 @@
-package com.codeup.codeupspringblog.controllers;
+package com.codeup.codeupspringblog.controller;
 
-import lombok.AllArgsConstructor;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-@AllArgsConstructor
+import org.springframework.web.bind.annotation.*;
+
+
 @Controller
 public class HelloController {
+    //    Lecture Controller
+    @GetMapping("/hello")
+    @ResponseBody
+    public String hello() {
+        return "Hello from Spring!";
+    }
+    //    Lecture Controller
+    @GetMapping("/hello/{name}")
+    @ResponseBody
+    public String sayHello(@PathVariable String name) {
+        return "Hello " + name + "!";
+    }
+    //    Lecture Controller
+    @RequestMapping(path = "/increment/{number}", method = RequestMethod.GET)
+    @ResponseBody
+    public String addOne(@PathVariable int number) {
+        return number + " plus one is " + (number + 1) + "!";
+    }
+
+
     @GetMapping("/join")
     public String showJoinForm() {
         return "join";
